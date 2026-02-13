@@ -1,6 +1,6 @@
 /**
  * ========================================
- * DATA Transporter - OPTIMIZED CODE.GS
+ * DATA MIGRATOR - OPTIMIZED CODE.GS
  * ========================================
  * Removed unused functions, consolidated logic,
  * improved performance with caching
@@ -8,7 +8,7 @@
 
 // ==================== CACHE & CONSTANTS ====================
 const CONFIG_FILE_NAME = 'configs.json';
-const CONFIG_FOLDER_NAME = 'SheetSync_User_Configs';
+const CONFIG_FOLDER_NAME = 'Data Transporter_User_Configs';
 const MAX_SPREADSHEETS = 50;
 
 // ==================== INITIALIZATION & MENU ====================
@@ -52,6 +52,7 @@ function updateCustomMenus() {
 // ==================== DRIVE & FILE MANAGEMENT ====================
 function getUserSpreadsheets() {
   try {
+    // Request authorization explicitly
     const files = DriveApp.getFilesByType(MimeType.GOOGLE_SHEETS);
     const list = [];
     let count = 0;
@@ -64,7 +65,36 @@ function getUserSpreadsheets() {
     
     return list.sort((a, b) => a.name.localeCompare(b.name));
   } catch (e) {
-    throw new Error("Drive Access Error: " + e.message);
+  throw new Error("Cannot access Google Drive. Please authorize the add-on and try again.");
+    return [];
+  }
+}
+
+function requestDriveAuthorization() {
+  // This function explicitly requests Drive authorization
+  // by attempting to access Drive - this will trigger the auth dialog
+  try {
+    // Try to get files - this requires Drive authorization
+    const files = DriveApp.getFilesByType(MimeType.GOOGLE_SHEETS);
+    
+    // If we can iterate (even just once), authorization worked
+    let hasAccess = false;
+    if (files.hasNext()) {
+      files.next(); // Just try to get one file
+      hasAccess = true;
+    }
+    
+    return { 
+      success: true, 
+      message: hasAccess ? 'Authorization successful' : 'No files found but access granted'
+    };
+  } catch (e) {
+    Logger.log('Authorization error: ' + e.message);
+    return { 
+      success: false, 
+      error: e.message,
+      message: 'Failed to access Drive. The authorization may have been declined or there was a network error.'
+    };
   }
 }
 
@@ -132,9 +162,19 @@ function getSheetColumns(ssId, sheetName, headerRow) {
 
 function getInitialData() {
   try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheets = ss.getSheets();
+    
     return {
-      activeName: SpreadsheetApp.getActiveSpreadsheet().getName(),
-      files: getUserSpreadsheets()
+      activeName: ss.getName(),
+      activeId: ss.getId(),
+      sheets: sheets.map(s => s.getName()),
+      files: getUserSpreadsheets(), // Load spreadsheets list
+      currentSpreadsheet: {
+        id: ss.getId(),
+        name: ss.getName(),
+        url: ss.getUrl()
+      }
     };
   } catch (e) {
     throw new Error("Initialization Error: " + e.message);
@@ -188,6 +228,16 @@ function runExecution(config) {
 }
 
 // ==================== CORE MIGRATION ENGINE ====================
+function checkSheetProtection_(sheet) {
+  const protections = sheet.getProtections(SpreadsheetApp.ProtectionType.SHEET);
+  if (protections.length > 0) {
+    const protection = protections[0];
+    if (!protection.canEdit()) {
+      throw new Error('Destination sheet "' + sheet.getName() + '" is protected and cannot be edited. Please unprotect the sheet or select a different destination.');
+    }
+  }
+}
+
 function runMigration(config) {
   try {
     config.dataMode = (config.dataMode || "").toLowerCase();
@@ -210,6 +260,9 @@ function runMigration(config) {
     if (!destSheet) {
       destSheet = destSS.insertSheet(config.destSheet || "Migrated_Data");
     }
+    
+    // Check if destination sheet is protected before proceeding
+    checkSheetProtection_(destSheet);
 
     // 3. TABLE STYLE (FULL SHEET SYNC)
     if (config.includeTableFormats) {
@@ -249,7 +302,13 @@ function runMigration(config) {
     // 5. PROCESS SOURCES
     for (const src of config.sources) {
       const sourceSS = SpreadsheetApp.openById(src.srcSS.replace(/.*\/d\/(.*)\/.*/, "$1"));
-      const sourceSheet = sourceSS.getSheetByName(src.srcSheet) || sourceSS.getSheets()[0];
+      const sourceSheet = sourceSS.getSheetByName(src.srcSheet);
+      
+      // Validate that the sheet exists
+      if (!sourceSheet) {
+        throw new Error(`Sheet "${src.srcSheet}" not found in source spreadsheet "${sourceSS.getName()}". Please check the sheet name.`);
+      }
+      
       const headerRow = parseInt(src.headerRow) || 1;
       const range = src.srcRange ? sourceSheet.getRange(src.srcRange) : sourceSheet.getDataRange();
 
@@ -791,19 +850,22 @@ function runArchive(config) {
         targetFolder = DriveApp.getFolderById(arc.folderId);
         Logger.log('Target folder resolved: ' + targetFolder.getName());
       } catch (e) {
-        throw new Error('Could not access selected folder. Please check permissions or select again.');
+        throw new Error('Cannot access the selected folder. It may have been deleted or you lost access. Please select again.');
       }
     }
     
-    if (arc.destinationMode === 'paste' && arc.folderId && arc.folderId.trim() !== '') {
-      try {
-        const folderId = extractFileId_(arc.folderId);
-        targetFolder = DriveApp.getFolderById(folderId);
-        Logger.log('Target folder from paste: ' + targetFolder.getName());
-      } catch (e) {
-        throw new Error('Invalid folder URL/ID. Please check and try again.');
-      }
+  if (arc.destinationMode === 'paste' && arc.folderId && arc.folderId.trim() !== '') {
+  try {
+    const folderId = extractFileId_(arc.folderId);
+    if (!folderId || folderId.length < 20) {  // Google IDs are ~33 chars
+      throw new Error('Invalid folder URL or ID');
     }
+    targetFolder = DriveApp.getFolderById(folderId);
+    Logger.log('Target folder from paste: ' + targetFolder.getName());
+  } catch (e) {
+    throw new Error('Invalid folder URL/ID pasted. Please check the URL and try again.');
+  }
+}
 
     // 3. RESOLVE FILE NAME WITH HUMAN-READABLE DATE
     const timestamp = Utilities.formatDate(
@@ -814,9 +876,10 @@ function runArchive(config) {
 
     let finalName = '';
     
-    // If custom name provided, append suffix to it
+    // If custom name provided, sanitize and append suffix to it
     if (arc.fileName && arc.fileName.trim()) {
-      finalName = arc.fileName.trim() + '_Archived_' + timestamp;
+      const sanitizedName = sanitizeFileName_(arc.fileName.trim());
+      finalName = sanitizedName + '_Archived_' + timestamp;
     } else {
       // Auto-generate based on source type
       if (arc.sourceType === 'sheet' && arc.sheets && arc.sheets.length > 0) {
@@ -868,6 +931,11 @@ function runArchive(config) {
 }
 
 // ==================== ARCHIVE HELPERS ====================
+function sanitizeFileName_(name) {
+  // Remove prohibited Google Drive filename characters: / \ ? * : < > | "
+  return name.replace(/[\/\\?*:<>|"]/g, '-');
+}
+
 function extractFileId_(input) {
   if (!input) return null;
   const match = input.match(/[-\w]{25,}/);
