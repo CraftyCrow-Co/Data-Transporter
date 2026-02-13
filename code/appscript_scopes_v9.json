@@ -1,5 +1,4 @@
 {
-  "timeZone": "Asia/Kolkata",
   "oauthScopes": [
     "https://www.googleapis.com/auth/script.container.ui",
     "https://www.googleapis.com/auth/spreadsheets",
@@ -25,7 +24,7 @@
   "addOns": {
     "common": {
       "name": "Data Transporter",
-      "logoUrl": "https://www.example.com/logo.png",
+      "logoUrl": "https://github.com/CraftyCrow-Co/Data-Transporter/blob/cb64303510d32cdb98ae38f1822b785cf39ffcd8/Logo/128x128_Data_Transporter_Icon.png",
       "useLocaleFromApp": true
     },
     "sheets": {
