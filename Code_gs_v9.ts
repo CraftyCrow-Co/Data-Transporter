@@ -1,6 +1,6 @@
 /**
  * ========================================
- * DATA MIGRATOR - OPTIMIZED CODE.GS
+ * DATA Transporter - OPTIMIZED CODE.GS
  * ========================================
  * Removed unused functions, consolidated logic,
  * improved performance with caching
@@ -22,7 +22,7 @@ function onOpen(e) {
 
 function showSidebar() {
   const html = HtmlService.createHtmlOutputFromFile('sidebar')
-    .setTitle('Data Migrator')
+    .setTitle('Data Transporter')
     .setWidth(450);
   SpreadsheetApp.getUi().showSidebar(html);
 }
