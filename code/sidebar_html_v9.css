@@ -736,6 +736,41 @@ summary {
     <!-- ================= NEW CONFIG VIEW ================= -->
     <div id="view-new" class="view">
       
+      <!-- AUTHORIZATION HELP CARD (shows only on error) -->
+      <div id="auth-help-card" class="card hidden" style="background:#fff3e0; border:1px solid #ff9800; display:none;">
+        <div style="display:flex; align-items:flex-start; gap:12px;">
+          <i class="material-icons" style="color:#ff9800; font-size:24px;">info</i>
+          <div style="flex:1;">
+            <div style="font-weight:bold; color:#e65100; margin-bottom:6px; font-size:14px;">🔒 Authorization Required</div>
+            <div style="font-size:12px; color:#666; margin-bottom:10px; line-height:1.5;">
+              This add-on needs permission to access your Google Drive.
+              <br><br>
+              <strong>What to do:</strong>
+              <ol style="margin:6px 0 6px 18px; padding:0; line-height:1.6;">
+                <li>Click the button below</li>
+                <li>A Google authorization window will appear</li>
+                <li>Review the permissions and click <strong>"Allow"</strong></li>
+                <li>The sidebar will refresh automatically</li>
+              </ol>
+            </div>
+            <button onclick="authorizeAccess()" style="
+              padding:10px 18px;
+              background:#ff9800;
+              color:white;
+              border:none;
+              border-radius:4px;
+              cursor:pointer;
+              font-weight:500;
+              font-size:13px;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            ">
+              <i class="material-icons" style="font-size:16px; vertical-align:middle; margin-right:4px;">verified_user</i>
+              Authorize Data Transporter
+            </button>
+          </div>
+        </div>
+      </div>
+      
       <!-- ARCHIVE TOGGLE -->
       <div class="archive-toggle" onclick="document.getElementById('archiveToggle').click()">
         <label>
@@ -786,13 +821,13 @@ summary {
           </label>
           <label class="checkbox-label">
             <input type="checkbox" id="includeTableFormats" onchange="toggleTableStyle()">
-            Table
+            Table Style
           </label>
           <label class="checkbox-label">
             <input type="checkbox" class="option-checkbox cf-checkbox" id="includeCondFormats">
             Conditional Formatting
           </label>
-          <div class="checkbox-help">Only enables when Table checkbox is checked</div>
+          <div class="checkbox-help">Only enables when Table Style is checked</div>
 
           <div id="execution-options">
             <label>Data Mode</label>
@@ -1088,13 +1123,31 @@ function loadArchiveSpreadsheets() {
   
   select.innerHTML = '<option disabled selected>Loading...</option>';
   
-  if (ssCache && ssCache.length > 0) {
-    let html = '<option value="" disabled selected>Select Spreadsheet...</option>';
-    ssCache.forEach(f => {
-      html += `<option value="${f.id}">${f.name}</option>`;
-    });
-    select.innerHTML = html;
+  // Load spreadsheets if not already loaded
+  if (!ssCache || ssCache.length === 0) {
+    google.script.run
+      .withSuccessHandler(function(files) {
+        ssCache = files;
+        populateArchiveDropdown();
+      })
+      .withFailureHandler(err => {
+        select.innerHTML = '<option disabled selected>Error loading files</option>';
+      })
+      .getUserSpreadsheets();
+  } else {
+    populateArchiveDropdown();
   }
+}
+
+function populateArchiveDropdown() {
+  const select = document.getElementById('archiveSourceFile');
+  if (!select) return;
+  
+  let html = '<option value="" disabled selected>Select Spreadsheet...</option>';
+  ssCache.forEach(f => {
+    html += `<option value="${f.id}">${f.name}</option>`;
+  });
+  select.innerHTML = html;
 }
 
 function handleArchiveSourceType() {
@@ -1465,10 +1518,73 @@ document.addEventListener('change', function(e) {
   const select = e.target.closest('.ss-select');
   if (!select) return;
 
+  // Check if user selected "Load All My Spreadsheets"
+  if (select.value === 'load-more') {
+    select.value = ''; // Reset selection
+    loadAllSpreadsheets(select);
+    return;
+  }
+
   select.size = 1;
   const searchInput = select.closest('.ss-search-group')?.querySelector('.ss-search-input');
   if (searchInput) searchInput.value = '';
 });
+
+// Load all spreadsheets from Drive (requires authorization)
+function loadAllSpreadsheets(triggerSelect) {
+  setStatus("Loading all spreadsheets from Drive...", "loading");
+  
+  google.script.run
+    .withSuccessHandler(function(files) {
+      if (!files || files.length === 0) {
+        showAuthorizationPrompt();
+        return;
+      }
+      
+      // Merge with current spreadsheet (avoid duplicates)
+      const allFiles = [currentSpreadsheet];
+      files.forEach(f => {
+        if (f.id !== currentSpreadsheet.id) {
+          allFiles.push(f);
+        }
+      });
+      
+      ssCache = allFiles;
+      
+      // Populate ALL dropdowns with full list
+      document.querySelectorAll('.ss-select').forEach(select => {
+        const currentValue = select.value;
+        const placeholder = select.dataset.placeholder || "Select Spreadsheet...";
+        let html = `<option value="" selected disabled>${placeholder}</option>`;
+        html += allFiles.map(f => {
+          const label = f.id === currentSpreadsheet.id ? `${f.name} (Current)` : f.name;
+          return `<option value="${f.id}">${label}</option>`;
+        }).join('');
+        select.innerHTML = html;
+        
+        // Restore previous selection if any
+        if (currentValue && currentValue !== 'load-more') {
+          select.value = currentValue;
+        }
+      });
+      
+      // Expand the dropdown that triggered this
+      if (triggerSelect) {
+        triggerSelect.size = 10;
+        triggerSelect.focus();
+      }
+      
+      setStatus("✅ Loaded " + files.length + " spreadsheets from Drive", "success");
+    })
+    .withFailureHandler(err => {
+      console.error("Error loading spreadsheets:", err);
+      showAuthorizationPrompt();
+    })
+    .getUserSpreadsheets();
+}
+
+// Load spreadsheets when user focuses on a dropdown (removed - now manual)
+// This was causing the auth issue
 
 document.querySelectorAll('.ss-search-input').forEach(input => {
   input.addEventListener('focus', () => {
@@ -1577,6 +1693,7 @@ function initLoad() {
         setStatus("No spreadsheet data returned", "error");
         return;
       }
+      
       ssCache = res.files;
 
       document.querySelectorAll('.ss-select').forEach(select => {
@@ -1596,6 +1713,71 @@ function initLoad() {
     .getInitialData();
   
   handleUI();
+}
+
+let currentSpreadsheet = null;
+
+// Old loadSpreadsheets function removed - now using loadAllSpreadsheets for manual trigger
+
+function showAuthorizationPrompt() {
+  // Show the auth help card
+  const authCard = document.getElementById('auth-help-card');
+  if (authCard) {
+    authCard.classList.remove('hidden');
+  }
+  
+  // Also show in status with helpful message
+  const statusDiv = document.getElementById('status-msg');
+  if (statusDiv) {
+    statusDiv.innerHTML = `
+      ⚠️ Authorization needed - Please click "Authorize Access to Drive" above
+    `;
+    statusDiv.className = 'status-msg status-loading';
+    statusDiv.style.display = 'block';
+  }
+}
+
+function authorizeAccess() {
+  setStatus("Opening authorization dialog... Please click 'Allow' when it appears", "loading");
+  
+  // Simply call getUserSpreadsheets again - this will trigger the authorization dialog
+  // The user will see Google's authorization prompt automatically
+  google.script.run
+    .withSuccessHandler(function(files) {
+      // Hide auth help card
+      const authCard = document.getElementById('auth-help-card');
+      if (authCard) {
+        authCard.classList.add('hidden');
+      }
+      
+      if (files && files.length > 0) {
+        // Success - we got files
+        ssCache = files;
+        
+        // Populate all dropdowns
+        document.querySelectorAll('.ss-select').forEach(select => {
+          const placeholder = select.dataset.placeholder || "Select Spreadsheet...";
+          let html = `<option value="" selected disabled>${placeholder}</option>`;
+          html += ssCache.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+          select.innerHTML = html;
+        });
+        
+        setStatus("✅ Authorization successful! " + files.length + " spreadsheets loaded.", "success");
+      } else {
+        // Got empty array - could mean no spreadsheets in Drive OR authorization was declined
+        setStatus("Authorization completed but no spreadsheets found. You can still paste spreadsheet URLs/IDs.", "success");
+        const authCard = document.getElementById('auth-help-card');
+        if (authCard) {
+          authCard.classList.add('hidden');
+        }
+      }
+    })
+    .withFailureHandler(err => {
+      console.error("Authorization failed:", err);
+      setStatus("❌ Authorization was declined or failed. Please try again and click 'Allow' when prompted.", "error");
+      // Keep auth card visible so user can retry
+    })
+    .getUserSpreadsheets();
 }
 
 function setStatus(msg, type) {
@@ -2378,7 +2560,7 @@ function loadSaved() {
         
         if (isArchive) {
           const arc = c.archive || {};
-          // FIX #7: Read sheets from arc.sheets array, not arc.sourceType
+          // Fix #7: Read sheets from arc.sheets array
           const sheetCount = (arc.sourceType === 'sheet' && arc.sheets && arc.sheets.length) 
             ? arc.sheets.length 
             : 0;
@@ -2404,7 +2586,7 @@ function loadSaved() {
           dateInfo = `Modified: ${c.timestamp ? new Date(c.timestamp).toLocaleString() : 'N/A'}`;
         }
         
-        // FIX #8: Make archive name clickable
+        // Make archive name clickable
         const nameClickHandler = isArchive 
           ? `onclick="openArchiveFolder('${c.id}')" style="cursor:pointer;"` 
           : '';
@@ -2414,7 +2596,7 @@ function loadSaved() {
             <div style="flex:1;">
               <div style="font-weight:bold; color:${isArchive ? '#2e7d32' : 'var(--blue)'}; font-size:13px; line-height:1.2; display:flex; align-items:center; gap:4px;">
                 <span ${nameClickHandler}>${configIcon} ${c.name}</span>
-                ${isArchive ? '<i class="material-icons" style="font-size:14px; color:#666; cursor:pointer;" onclick="openArchiveFolder(\'' + c.id + '\')">link</i>' : ''}
+                ${isArchive ? '<i class="material-icons" style="font-size:16px; color:#1a73e8; cursor:pointer;" onclick="openArchiveFolder(\'' + c.id + '\')">folder</i>' : ''}
               </div>
               ${configInfo}
               <div style="font-size:9px; color:#999; margin-top:2px;">
@@ -2424,39 +2606,36 @@ function loadSaved() {
             ${isActive ? '<span class="status-pill pill-active" style="font-size:9px;">● Scheduled</span>' : ''}
           </div>
 
-          <div class="tool-btn-row" style="display:flex; gap:5px; align-items:center; justify-content:flex-end;">
-            <div style="position:relative;">
+          <div class="tool-btn-row" style="display:flex; gap:5px; align-items:center;">
+            <button class="tool-btn" title="Run" style="background:#1e8e3e;" onclick="runSavedConfigById('${c.id}')">
+              <i class="material-icons">play_arrow</i>
+            </button>
+            <button class="tool-btn" title="Edit" style="background:#f59e0b;" onclick="editConfig('${c.id}')">
+              <i class="material-icons">edit</i>
+            </button>
+            ${isActive
+              ? `<button class="tool-btn" title="Unschedule" style="background:#673ab7;" onclick="stopTrigger('${c.id}')">
+                   <i class="material-icons">alarm_off</i>
+                 </button>`
+              : `<button class="tool-btn" title="Schedule" style="background:#1a73e8;" onclick="openScheduler('${c.id}')">
+                   <i class="material-icons">calendar_today</i>
+                 </button>`}
+            
+            <div style="position:relative; margin-left:auto;">
               <button class="tool-btn" title="More options" style="background:#5f6368" onclick="toggleConfigMenu('${c.id}')">
                 <i class="material-icons">more_vert</i>
               </button>
               <div id="menu-${c.id}" class="config-menu hidden">
-                <div class="menu-item" onclick="runSavedConfigById('${c.id}'); toggleConfigMenu('${c.id}')" style="color:#1e8e3e;">
-                  <i class="material-icons" style="color:#1e8e3e;">play_arrow</i>
-                  Run
-                </div>
-                ${isActive
-                  ? `<div class="menu-item" onclick="stopTrigger('${c.id}'); toggleConfigMenu('${c.id}')" style="color:#673ab7;">
-                       <i class="material-icons" style="color:#673ab7;">alarm_off</i>
-                       Unschedule
-                     </div>`
-                  : `<div class="menu-item" onclick="openScheduler('${c.id}'); toggleConfigMenu('${c.id}')" style="color:#1a73e8;">
-                       <i class="material-icons" style="color:#1a73e8;">calendar_today</i>
-                       Schedule
-                     </div>`}
                 <div class="menu-item" onclick="toggleCustomMenu('${c.id}'); toggleConfigMenu('${c.id}')" style="color:#5f6368;">
                   <i class="material-icons" style="color:#5f6368;">${hasMenu ? 'speaker_notes_off' : 'menu_book'}</i>
                   ${hasMenu ? 'Remove from Menu' : 'Add to Menu'}
-                </div>
-                <div class="menu-item" onclick="editConfig('${c.id}'); toggleConfigMenu('${c.id}')" style="color:#f59e0b;">
-                  <i class="material-icons" style="color:#f59e0b;">edit</i>
-                  Edit
                 </div>
                 <div class="menu-item" onclick="exportConfigAsCode('${c.id}'); toggleConfigMenu('${c.id}')" style="color:#9c27b0;">
                   <i class="material-icons" style="color:#9c27b0;">code</i>
                   Export Code
                 </div>
-                <div class="menu-item" onclick="deleteCfg('${c.id}')" style="color:var(--red)">
-                  <i class="material-icons" style="color:var(--red);">delete</i>
+                <div class="menu-item" onclick="deleteCfg('${c.id}')" style="color:#d93025;">
+                  <i class="material-icons" style="color:#d93025;">delete</i>
                   Delete
                 </div>
               </div>
