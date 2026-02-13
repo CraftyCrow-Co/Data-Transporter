@@ -1,0 +1,37 @@
+{
+  "timeZone": "Asia/Kolkata",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/script.container.ui",
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/script.scriptapp"
+  ],
+  "dependencies": {
+    "enabledAdvancedServices": [
+      {
+        "userSymbol": "Sheets",
+        "version": "v4",
+        "serviceId": "sheets"
+      },
+      {
+        "userSymbol": "Drive",
+        "version": "v3",
+        "serviceId": "drive"
+      }
+    ]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "addOns": {
+    "common": {
+      "name": "Sheet Copier",
+      "logoUrl": "https://www.example.com/logo.png",
+      "useLocaleFromApp": true
+    },
+    "sheets": {
+      "homepageTrigger": {
+        "runFunction": "showSidebar"
+      }
+    }
+  }
+}
