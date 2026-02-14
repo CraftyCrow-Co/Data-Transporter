@@ -10,6 +10,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@400&family=Source+Code+Pro:wght@500;600;900&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
     
+    <!-- SVG favicon (best) -->
+    <link rel="icon" href="../logo/Data_Transporter_Icon.svg" type="image/svg+xml">
+
+    <!-- PNG fallbacks -->
+    <link rel="icon" type="image/png" sizes="48x48" href="../logo/48x48_Data_Transporter_Icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../logo/16x16_Data_Transporter_Icon.png">
+
+    <!-- Optional: nicer on iOS -->
+    <link rel="apple-touch-icon" sizes="128x128" href="../logo/128x128_Data_Transporter_Icon.png">
+
+
     <style>
         * {
             margin: 0;
@@ -108,8 +119,9 @@
         }
 
         .logo {
-            width: 28px;
             height: 28px;
+            width: auto;
+            display: block;
         }
 
         .logo-text {
@@ -132,12 +144,22 @@
             margin: 0 auto 1.25rem;
             background: white;
             border-radius: 14px;
-            padding: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 8px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             animation: fadeInUp 0.6s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        @keyframes fadeInUp {
+        
+        .hero-icon img{
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: contain;
+        }
+@keyframes fadeInUp {
             from {
                 opacity: 0;
                 transform: translateY(20px);
@@ -146,12 +168,6 @@
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-
-        .hero-icon img {
-            width: 100%;
-            height: 100%;
-            display: block;
         }
 
         .hero h1 {
@@ -677,7 +693,7 @@
         <div class="container">
             <div class="header-content">
                 <a href="#" class="logo-wrapper">
-                    <svg class="logo" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg"><path d="M41.707,13.793L30.207,2.293C30.02,2.105 29.766,2 29.5,2L11.491,2C9.566,2 8,3.561 8,5.479L8,43.901C8,46.161 9.845,48 12.113,48L37.887,48C40.155,48 42,46.161 42,43.901L42,14.5C42,14.235 41.895,13.98 41.707,13.793ZM31.667,14C30.748,14 30,13.252 30,12.333L30,4.914L39.086,14L31.667,14Z" fill="#2d2a27"/><path d="M30.997,22.4L35.797,26L30.997,29.6L30.997,22.4Z" fill="#2d2a27"/><path d="M15,26L31.957,26" fill="none" stroke="#2d2a27" stroke-width="2"/><path d="M18.961,32.28L14.161,35.88L18.961,39.48L18.961,32.28Z" fill="#2d2a27"/><path d="M18.001,35.88L35,35.88" fill="none" stroke="#2d2a27" stroke-width="2"/></svg>
+                    <img class="logo" src="../logo/Data_Transporter_Icon.svg" alt="Data Transporter">
                     <span class="logo-text">Data Transporter</span>
                 </a>
             </div>
@@ -688,7 +704,7 @@
     <section class="hero">
         <div class="container">
             <div class="hero-icon">
-                <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg"><path d="M41.707,13.793L30.207,2.293C30.02,2.105 29.766,2 29.5,2L11.491,2C9.566,2 8,3.561 8,5.479L8,43.901C8,46.161 9.845,48 12.113,48L37.887,48C40.155,48 42,46.161 42,43.901L42,14.5C42,14.235 41.895,13.98 41.707,13.793ZM31.667,14C30.748,14 30,13.252 30,12.333L30,4.914L39.086,14L31.667,14Z" fill="#2d2a27"/><path d="M30.997,22.4L35.797,26L30.997,29.6L30.997,22.4Z" fill="#2d2a27"/><path d="M15,26L31.957,26" fill="none" stroke="#2d2a27" stroke-width="2"/><path d="M18.961,32.28L14.161,35.88L18.961,39.48L18.961,32.28Z" fill="#2d2a27"/><path d="M18.001,35.88L35,35.88" fill="none" stroke="#2d2a27" stroke-width="2"/></svg>
+                    <img src="../logo/Data_Transporter_Icon.svg" alt="" aria-hidden="true">
             </div>
             <h1>Data Transporter</h1>
             <p class="tagline">The upgrade to IMPORTRANGE</p>
