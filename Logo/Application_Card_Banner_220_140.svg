@@ -7,7 +7,7 @@
             <g transform="matrix(1,0,0,1,161.938883,-41.997762)">
                 <rect x="166.788" y="41.998" width="220" height="140" style="fill:white;"/>
             </g>
-            <g transform="matrix(1.32558,0,0,1.32558,457.430216,9.714961)">
+            <g transform="matrix(1.375272,0,0,1.375272,474.765522,7.941577)">
                 <path d="M41.707,13.793C41.895,13.98 42,14.235 42,14.5L42,43.901C42,46.161 40.155,48 37.887,48L12.113,48C9.845,48 8,46.161 8,43.901L8,5.479C8,3.561 9.566,2 11.491,2L29.5,2C29.766,2 30.02,2.105 30.207,2.293L41.707,13.793ZM25.924,28.762L15,23.3L15,34.224L25.924,28.762ZM24.873,34.224L35.797,39.686L35.797,28.762L24.873,34.224ZM31.667,14L39.086,14L30,4.914L30,12.333C30,13.252 30.748,14 31.667,14Z"/>
             </g>
             <g transform="matrix(2.37986,0,0,2.37986,-273.575379,-103.29319)">
@@ -23,6 +23,25 @@
                 <g transform="matrix(12,0,0,12,359.119317,69.368806)">
                 </g>
                 <text x="193.519px" y="69.369px" style="font-family:'SourceCodePro-Semibold', 'Source Code Pro', monospace;font-weight:600;font-size:12px;fill:white;">FREE GOOGLE SHEET ADDON</text>
+            </g>
+            <g transform="matrix(1.147887,0,0,1.147887,122.780786,-62.779444)">
+                <text x="193.519px" y="69.369px" style="font-family:'SourceCodePro-Regular', 'Source Code Pro', monospace;font-size:7.84px;">✓ copy</text>
+                <text x="193.519px" y="79.224px" style="font-family:'SourceCodePro-Regular', 'Source Code Pro', monospace;font-size:7.84px;">✓ move</text>
+                <text x="193.519px" y="89.08px" style="font-family:'SourceCodePro-Regular', 'Source Code Pro', monospace;font-size:7.84px;">✓ archive</text>
+                <g transform="matrix(7.840492,0,0,7.840492,240.562266,98.9353)">
+                </g>
+                <text x="193.519px" y="98.935px" style="font-family:'SourceCodePro-Regular', 'Source Code Pro', monospace;font-size:7.84px;">✓ schedule</text>
+            </g>
+            <g transform="matrix(1,0,0,1,220.582817,-53.756341)">
+                <text x="200.769px" y="71.458px" style="font-family:'SourceCodePro-BoldIt', 'Source Code Pro', monospace;font-weight:700;font-style:italic;font-size:10px;">see</text>
+                <text x="224.769px" y="71.458px" style="font-family:'SourceCodePro-BoldIt', 'Source Code Pro', monospace;font-weight:700;font-style:italic;font-size:10px;fill:rgb(0,176,80);">all</text>
+                <text x="194.769px" y="84.028px" style="font-family:'SourceCodePro-BoldIt', 'Source Code Pro', monospace;font-weight:700;font-style:italic;font-size:10px;">Movement</text>
+                <text x="206.769px" y="96.598px" style="font-family:'SourceCodePro-BoldIt', 'Source Code Pro', monospace;font-weight:700;font-style:italic;font-size:10px;fill:rgb(0,176,80);">in one</text>
+                <g transform="matrix(10,0,0,10,212.769318,109.168462)">
+                </g>
+                <g transform="matrix(10,0,0,10,242.769318,109.168462)">
+                </g>
+                <text x="212.769px" y="109.168px" style="font-family:'SourceCodePro-BoldIt', 'Source Code Pro', monospace;font-weight:700;font-style:italic;font-size:10px;">place</text>
             </g>
         </g>
     </g>
