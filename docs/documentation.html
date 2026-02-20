@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation — Data Transporter</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@400&family=Source+Code+Pro:wght@500&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #f5f1eb;
+            --surface: #ffffff;
+            --text: #2d2a27;
+            --text-muted: #78716c;
+            --border: #d6d3d1;
+            --accent: #0f9d58; 
+            --accent-light: #e8f5e9;
+            --header-h: 70px;
+            --sidebar-w: 240px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* Noto Emoji Class */
+        .emoji { font-family: 'Noto Emoji', sans-serif; }
+
+        /* FIX: Prevents content from being hidden under the sticky header */
+        h1, h2, h3 {
+            scroll-margin-top: calc(var(--header-h) + 30px);
+        }
+
+        /* HEADER */
+        header {
+            height: var(--header-h);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
+        }
+        .back-btn:hover { color: var(--accent); }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--accent);
+            letter-spacing: 0.5px;
+        }
+
+        /* LAYOUT */
+        .wrapper {
+            max-width: 1440px;
+            margin: var(--header-h) auto 0;
+            display: flex;
+            gap: 20px;
+            padding: 0 20px;
+        }
+
+        /* SIDEBARS */
+        .sidebar {
+            width: var(--sidebar-w);
+            position: sticky;
+            top: var(--header-h);
+            height: calc(100vh - var(--header-h));
+            overflow-y: auto;
+            padding: 40px 0;
+        }
+
+        .sidebar-left { padding-right: 20px; }
+        .sidebar-right { font-size: 0.85rem; padding-left: 20px; }
+
+        .toc-title {
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            letter-spacing: 1.2px;
+            opacity: 0.7;
+        }
+
+        .toc-link {
+            display: block;
+            text-decoration: none;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+            border-left: 2px solid transparent;
+            padding-left: 12px;
+            font-weight: 500;
+        }
+
+        .toc-link:hover {
+            color: var(--text);
+            border-left-color: var(--border);
+        }
+
+        .toc-link.active {
+            color: var(--accent);
+            border-left-color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* MAIN CONTENT */
+        main {
+            flex: 1;
+            padding: 40px 40px 100px;
+            background: var(--surface);
+            min-height: 100vh;
+            border-left: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+        }
+
+        .content-body { max-width: 720px; margin: 0 auto; }
+
+        h1 { font-size: 2.8rem; margin-bottom: 24px; color: var(--text); letter-spacing: -1px; }
+        h2 { font-size: 1.8rem; margin: 60px 0 20px; border-bottom: 1px solid var(--bg); padding-bottom: 10px; }
+        h3 { font-size: 1.3rem; margin: 35px 0 12px; color: var(--accent); }
+        
+        p { margin-bottom: 20px; color: #3a3a3a; font-size: 1.05rem; }
+        
+        ul, ol { margin-bottom: 24px; padding-left: 25px; }
+        li { margin-bottom: 12px; }
+
+        code {
+            font-family: 'Source Code Pro', monospace;
+            background: var(--bg);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #d11141; /* Contrast code color */
+        }
+
+        .callout {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 24px;
+            border-radius: 8px;
+            margin: 40px 0;
+        }
+
+        footer {
+            margin-top: 80px;
+            padding-top: 40px;
+            border-top: 1px solid var(--bg);
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .sidebar-right { display: none; }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar-left { display: none; }
+            .wrapper { padding: 0; }
+            main { padding: 40px 24px; border: none; }
+            header { padding: 0 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="index.html" class="back-btn">
+        <span class="emoji">⬅️</span> Back to Home
+    </a>
+    <div class="logo-text">DATA TRANSPORTER</div>
+</header>
+
+<div class="wrapper">
+    <aside class="sidebar sidebar-left">
+        <div class="toc-title">Documentation</div>
+        <nav id="toc-main"></nav>
+    </aside>
+
+    <main>
+        <article class="content-body">
+            <h1>User Guide</h1>
+            <p>Welcome to the central documentation for Data Transporter. This guide covers everything from your first transfer to complex background automation in Google Sheets™.</p>
+
+            <h2 id="installation">Installation <span class="emoji">📥</span></h2>
+            <p>Data Transporter is available via the Google Workspace™ Marketplace. Once installed, it attaches to your spreadsheets globally.</p>
+            
+            <h3 id="activation">Activation</h3>
+            <p>To start, open any Google Sheets™ file and go to <code>Extensions &gt; Data Transporter &gt; Open Sidebar</code>. If this is your first time, you will need to approve the Google™ OAuth scopes.</p>
+            
+            <h3 id="permissions">Required Permissions</h3>
+            <p>The add-on requires access to <code>spreadsheets</code> (to read/write data) and <code>drive</code> (to save your configurations and create archive files). We never see your data; all processes run within your own Google™ account.</p>
+
+            <h2 id="core-logic">Core Logic <span class="emoji">🧠</span></h2>
+            <p>Understanding how Data Transporter handles data is key to preventing accidental data loss.</p>
+            
+            <h3 id="sync-vs-move">Sync vs. Move</h3>
+            <p><strong>Sync Mode:</strong> Acts like a "mirror." It copies data from source to destination. If you delete a row in the source, it remains in the destination unless the sync is run again with specific cleanup rules.</p>
+            
+            <p><strong>Move Mode:</strong> Acts like "cut and paste." It is a destructive action on the source sheet. Use this for moving completed tasks into an archive.</p>
+
+            <h3 id="filtering">Filtering Data</h3>
+            <p>You can set multiple filter conditions. Data Transporter will only process rows that meet 100% of your criteria. You can filter by exact matches, partial strings, or numerical values.</p>
+
+            <h2 id="automation">Automation <span class="emoji">🤖</span></h2>
+            <p>Stop doing manual work. Data Transporter includes a robust triggering system.</p>
+            
+            <h3 id="triggers">Time-Based Triggers</h3>
+            <p>Configurations can be set to run every hour, every day, or on specific days of the week. This uses Google™ Apps Script Triggers under the hood.</p>
+            
+            <h3 id="error-handling">Error Handling</h3>
+            <p>If a Google Sheets™ limit is hit (like the 10 million cell limit) or a sheet is deleted, the automation will pause and send an alert to your Google™ account email.</p>
+
+            <div class="callout">
+                <p><span class="emoji">⚠️</span> <strong>Important:</strong> Always test new configurations on a copy of your data before enabling <strong>Move Mode</strong>.</p>
+            </div>
+
+            <footer>
+                <p>&copy; 2024 CraftyCrow.co — Google Sheets™, Google Drive™, and Google Workspace™ are trademarks of Google LLC.</p>
+            </footer>
+        </article>
+    </main>
+
+    <aside class="sidebar sidebar-right">
+        <div class="toc-title">On this page</div>
+        <nav id="toc-sub"></nav>
+    </aside>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const mainToc = document.getElementById('toc-main');
+        const subToc = document.getElementById('toc-sub');
+        const content = document.querySelector('.content-body');
+        const h2s = content.querySelectorAll('h2');
+        const h3s = content.querySelectorAll('h3');
+
+        // Helper to strip emojis for TOC text
+        const cleanText = (text) => text.replace(/[^\x00-\x7F]/g, "").trim();
+
+        // Build Left TOC (h2)
+        h2s.forEach(h2 => {
+            const link = document.createElement('a');
+            link.href = `#${h2.id}`;
+            link.className = 'toc-link';
+            link.textContent = cleanText(h2.textContent);
+            mainToc.appendChild(link);
+        });
+
+        // Build Right TOC (h3)
+        h3s.forEach(h3 => {
+            const link = document.createElement('a');
+            link.href = `#${h3.id}`;
+            link.className = 'toc-link';
+            link.textContent = cleanText(h3.textContent);
+            subToc.appendChild(link);
+        });
+
+        // Intersection Observer for Active Highlighting
+        const observerOptions = {
+            rootMargin: '-20% 0px -70% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    document.querySelectorAll('.toc-link').forEach(link => {
+                        link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+                    });
+                }
+            });
+        }, observerOptions);
+
+        h2s.forEach(section => observer.observe(section));
+        h3s.forEach(section => observer.observe(section));
+    });
+</script>
+
+</body>
+</html>

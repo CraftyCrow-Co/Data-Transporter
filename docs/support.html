@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Support — Data Transporter</title>
+  <style>
+:root{
+  color-scheme: light dark;
+  --bg:#faf8f5; --surface:#ffffff; --text:#2f2b28; --muted:#6e6862;
+  --border:#e0dad3; --accent:#2563eb; --maxw:920px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#121110; --surface:#1b1917; --text:#f2efea; --muted:#b8b1a8;
+    --border:#2b2825; --accent:#5b8cff;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  line-height:1.65;
+  background:var(--bg);
+  color:var(--text);
+}
+header{
+  position: sticky;
+  top: 0;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner{
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 14px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+main{max-width:var(--maxw);margin:0 auto;padding:20px 16px 44px}
+article{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:22px 20px;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+h1{font-size:1.85rem;line-height:1.25;margin:0 0 12px}
+h2{font-size:1.25rem;margin:22px 0 10px}
+h3{font-size:1.05rem;margin:18px 0 8px}
+p{margin:10px 0}
+ul,ol{padding-left:22px;margin:10px 0}
+li{margin:6px 0}
+hr{border:0;border-top:1px solid var(--border);margin:18px 0}
+.small{color:var(--muted);font-size:.95rem}
+footer{max-width:var(--maxw);margin:0 auto;padding:0 16px 28px;color:var(--muted);font-size:.95rem}
+</style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <a href="./index.html" aria-label="Back to home">← Home</a>
+      <div class="small">Support — Data Transporter</div>
+    </div>
+  </header>
+
+  <main>
+    <article>
+<h1>Support for Data Transporter</h1>
+
+<hr>
+
+<p>For questions about this addon, Email us at: 
+  <br> support+addons@craftycrow.co
+  <br>
+  <br>
+  Or, directly raise a <a href="https://github.com/CraftyCrow-Co/Data-Transporter/issues">GitHub Issue</a>
+</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <div class="small">© CraftyCrow.co</div>
+  </footer>
+</body>
+</html>
