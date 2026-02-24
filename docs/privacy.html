@@ -51,13 +51,19 @@ a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline}
 h1{font-size:1.85rem;line-height:1.25;margin:0 0 12px}
 h2{font-size:1.25rem;margin:22px 0 10px}
-h3{font-size:1.05rem;margin:18px 0 8px}
 p{margin:10px 0}
 ul,ol{padding-left:22px;margin:10px 0}
 li{margin:6px 0}
 hr{border:0;border-top:1px solid var(--border);margin:18px 0}
 .small{color:var(--muted);font-size:.95rem}
 footer{max-width:var(--maxw);margin:0 auto;padding:0 16px 28px;color:var(--muted);font-size:.95rem}
+.security-note {
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+  border-left: 4px solid var(--accent);
+  padding: 12px 16px;
+  margin: 20px 0;
+  border-radius: 4px;
+}
 </style>
 </head>
 <body>
@@ -71,76 +77,71 @@ footer{max-width:var(--maxw);margin:0 auto;padding:0 16px 28px;color:var(--muted
   <main>
     <article>
 <h1>Privacy Policy for Data Transporter</h1>
+<p>Last updated: 2026-02-24</p>
 
-<p>Last updated: 2026-02-13</p>
-
-<h2>What Data We Access</h2>
-<p>Data Transporter requires access to:</p>
-<ul>
-<li>Your Google Sheets™ (to read and write data)</li>
-<li>Your Google Drive™ (to list available spreadsheets and folders)</li>
-</ul>
-
-<h2>What We Do With Your Data</h2>
-<ul>
-<li>All data processing happens within your Google account</li>
-<li>We do NOT store, transmit, or access your spreadsheet data on external servers</li>
-<li>Configuration settings are stored in your Google Drive™ only</li>
-</ul>
-
-<h2>What We Store</h2>
-<ul>
-<li>Saved transfer configurations (stored in your Google Drive™ folder: &quot;DataTranporter_User_Configs&quot;)</li>
-<li>User preferences (stored locally in your browser/Google account)</li>
-</ul>
-
-<h2>Third-Party Services</h2>
-<p>This add-on does not use any third-party analytics or tracking services.</p>
+<div class="security-note">
+  <strong>Zero-Server Architecture:</strong> Data Transporter is a serverless application built on Google Apps Script. We do not own or operate any external servers or databases. Your data never leaves the Google™ technical infrastructure.
+</div>
 
 <h2>Limited Use Disclosure</h2>
-
-<p>Data Transporter&#x27;s use and transfer of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
-
-<p>Specifically:</p>
+<p>Data Transporter's use and transfer of information received from Google APIs to any other app will adhere to <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
 <ul>
-<li>We only request the minimum scopes necessary for the add-on to function</li>
-<li>We do not use your data for advertising purposes</li>
-<li>We do not share your data with third parties</li>
-<li>We do not use your data to train AI/ML models</li>
+  <li><strong>No External Storage:</strong> User data is never transferred to external servers.</li>
+  <li><strong>No Tracking:</strong> This add-on does not use any third-party analytics or tracking services.</li>
+  <li><strong>No Advertising:</strong> User data is not used for serving advertisements.</li>
+  <li><strong>No AI Training:</strong> User data is not used for training machine learning or AI models.</li>
+  <li><strong>No Selling:</strong> User data is never sold to third parties.</li>
 </ul>
 
-<h2>Data Deletion</h2>
-<p>You can delete all saved configurations by:</p>
-<ol>
-<li>Deleting the &quot;DataTransporter_User_Configs&quot; folder from your Google Drive™</li>
-<li>Uninstalling the add-on from Google Workspace™ Marketplace</li>
-</ol>
-
-<h2>Your Rights</h2>
-<p>You have full control over your data. You can:</p>
+<h2>Required Permissions (Scopes)</h2>
+<p>To provide its core features, this add-on requires the following <strong>Restricted Scopes</strong> permissions:</p>
 <ul>
-<li>View all saved configurations</li>
-<li>Delete configurations at any time</li>
-<li>Uninstall the add-on and remove all associated data</li>
+<li><strong>Google Sheets™:</strong> To read source data and write it to your destination sheets as requested by you.</li>
+<li><strong>Google Drive™:</strong> To list available files and folders so you can select your transfer targets.</li>
+</ul>
+
+<h2>Data Protection Mechanisms</h2>
+<p>All data processing happens within your Google account. This means we automatically use the following protections:</p>
+<ul>
+<li><strong>Encryption in Transit:</strong> All data handled by the add-on is encrypted using Google’s industry-standard SSL/TLS protocols.</li>
+<li><strong>Direct Execution:</strong> Data processing is executed locally via Google Apps Script. Your spreadsheet content is never transmitted to the developer or any external third party.</li>
+<li><strong>Authentication:</strong> Access is managed via OAuth 2.0. We only request the <strong>minimum scopes</strong> necessary.</li>
+<li><strong>No Human Access:</strong> No person (including the developer) has the ability to read or access your spreadsheet data.</li>
+</ul>
+
+<h2>Information Storage</h2>
+<p>The add-on only stores functional settings within your own environment:</p>
+<ul>
+<li><strong>Transfer Configurations:</strong> Your settings (mappings/rules) are stored in your own Google Drive™ in a folder you control ("DataTransporter_User_Configs"). We do not have access to this folder.</li>
+</ul>
+
+<h2>Data Retention</h2>
+<p>We do not retain any of your spreadsheet data or personal information. Spreadsheet content is processed in volatile memory during the transfer execution and is not persisted. Your functional configurations are retained in your Google Drive™ only for as long as you choose to keep them; we do not maintain backups or copies of these files on any external systems.</p>
+
+<h2>Data Deletion & User Rights</h2>
+<p>You have full control over your data. Because we do not store your information on external servers, you can perform a complete data deletion yourself at any time:</p>
+<ul>
+  <li><strong>Configuration Deletion:</strong> To delete all saved transfer rules and settings, simply delete the folder named "DataTransporter_User_Configs" from your Google Drive™.</li>
+  <li><strong>Access Revocation:</strong> You can revoke the add-on's access to your account by uninstalling it from the Google Workspace™ Marketplace or by visiting your Google Account Security settings.</li>
+  <li><strong>Data Portability:</strong> Since your configurations are stored as files in your own Google Drive™, you maintain constant possession and portability of your data.</li>
 </ul>
 
 <h2>Updates to This Policy</h2>
-<p>We will notify users of any material changes to this privacy policy through the add-on interface.</p>
+<p>We may update this policy to reflect changes in Google’s requirements. We will notify users of material changes via this page and through a notice in the add-on interface.</p>
 
 <h2>Contact</h2>
-<p>For questions about this privacy policy, contact: support+addons@craftycrow.co</p>
+<p>For questions regarding data protection, contact: support+addons@craftycrow.co</p>
 
 <hr>
-<p>Author: Anjuman Bhandari</p>
-<p>Publisher: CraftyCrow.co</p>
+<p>Author: Anjuman Bhandari | Publisher: CraftyCrow.co</p>
     </article>
   </main>
 
   <footer>
     <div class="small">
-      Google Sheets™, Google Drive™, and Google Workspace™ are trademarks of Google LLC.
-      <br>
-      © CraftyCrow.co</div>
+      Google Sheets™, Google Drive™, and Google Workspace™ are trademarks of Google LLC. <br>
+      Learn more about how Google handles your data at <a href="https://policies.google.com/privacy" target="_blank">Google's Privacy & Terms</a>.
+    </div>
   </footer>
 </body>
 </html>
