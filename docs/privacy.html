@@ -103,9 +103,11 @@ footer{max-width:var(--maxw);margin:0 auto;padding:0 16px 28px;color:var(--muted
 <h2>Data Protection Mechanisms</h2>
 <p>All data processing happens within your Google account. This means we automatically use the following protections:</p>
 <ul>
+<li><strong>Encryption at Rest:</strong> Any persistent data, including your transfer configurations and temporary metadata, is stored within your Google Drive environment using 256-bit Advanced Encryption Standard (AES-256) or better, provided by the Google Cloud infrastructure.</li>
 <li><strong>Encryption in Transit:</strong> All data handled by the add-on is encrypted using Google’s industry-standard SSL/TLS protocols.</li>
+<li><strong>Memory-Only Processing:</strong> Sensitive spreadsheet content is processed in volatile execution memory (RAM) and is never written to persistent logs or external storage during the transformation process.</li>
 <li><strong>Direct Execution:</strong> Data processing is executed locally via Google Apps Script. Your spreadsheet content is never transmitted to the developer or any external third party.</li>
-<li><strong>Authentication:</strong> Access is managed via OAuth 2.0. We only request the <strong>minimum scopes</strong> necessary.</li>
+<li><strong>Authentication:</strong> Access is managed via OAuth 2.0. We only request the <strong>minimum scopes</strong> necessary. Our "Zero-Knowledge" architecture ensures that the developer never has access to your decryption keys or raw data.</li>
 <li><strong>No Human Access:</strong> No person (including the developer) has the ability to read or access your spreadsheet data.</li>
 </ul>
 
